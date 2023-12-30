@@ -13,8 +13,8 @@ try:
     XFORMERS_IS_AVAILBLE = True
 except:
     XFORMERS_IS_AVAILBLE = False
-from lvdm.basics import conv_nd, normalization, zero_module
-from lvdm.common import checkpoint, default, exists, init_, max_neg_value, uniq
+from ...lvdm.basics import conv_nd, normalization, zero_module
+from ...lvdm.common import checkpoint, default, exists, init_, max_neg_value, uniq
 
 
 class RelativePosition(nn.Module):

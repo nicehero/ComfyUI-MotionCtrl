@@ -25,13 +25,13 @@ from pytorch_lightning.utilities import rank_zero_only
 from torch.optim.lr_scheduler import CosineAnnealingLR, LambdaLR
 from torchvision.utils import make_grid
 
-from lvdm.basics import disabled_train
-from lvdm.common import default, exists, extract_into_tensor, noise_like
-from lvdm.distributions import DiagonalGaussianDistribution, normal_kl
-from lvdm.ema import LitEma
-from lvdm.models.samplers.ddim import DDIMSampler
-from lvdm.models.utils_diffusion import make_beta_schedule
-from utils.utils import instantiate_from_config
+from ...lvdm.basics import disabled_train
+from ...lvdm.common import default, exists, extract_into_tensor, noise_like
+from ...lvdm.distributions import DiagonalGaussianDistribution, normal_kl
+from ...lvdm.ema import LitEma
+from ...lvdm.models.samplers.ddim import DDIMSampler
+from ...lvdm.models.utils_diffusion import make_beta_schedule
+from ...utils.utils import instantiate_from_config
 
 __conditioning_keys__ = {'concat': 'c_concat',
                          'crossattn': 'c_crossattn',

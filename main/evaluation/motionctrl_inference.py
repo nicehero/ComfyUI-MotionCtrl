@@ -17,11 +17,11 @@ from omegaconf import OmegaConf
 from pytorch_lightning import seed_everything
 from tqdm import tqdm
 
-sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
-from lvdm.models.samplers.ddim import DDIMSampler
-from main.evaluation.motionctrl_prompts_camerapose_trajs import (
+#sys.path.insert(1, os.path.join(sys.path[0], '..', '..'))
+from ...lvdm.models.samplers.ddim import DDIMSampler
+from ...main.evaluation.motionctrl_prompts_camerapose_trajs import (
     both_prompt_camerapose_traj, cmcm_prompt_camerapose, omom_prompt_traj)
-from utils.utils import instantiate_from_config
+from ...utils.utils import instantiate_from_config
 
 DEFAULT_NEGATIVE_PROMPT = 'blur, haze, deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, '\
                           'sketch, cartoon, drawing, anime, mutated hands and fingers, deformed, distorted, '\

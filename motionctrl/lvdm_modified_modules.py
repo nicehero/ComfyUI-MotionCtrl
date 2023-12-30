@@ -3,7 +3,7 @@ import logging
 import torch
 from einops import rearrange, repeat
 
-from lvdm.models.utils_diffusion import timestep_embedding
+from ..lvdm.models.utils_diffusion import timestep_embedding
 
 try:
     import xformers

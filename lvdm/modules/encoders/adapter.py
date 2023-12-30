@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-from lvdm.basics import avg_pool_nd, conv_nd
+from ....lvdm.basics import avg_pool_nd, conv_nd
 
 
 class Downsample(nn.Module):

@@ -11,9 +11,6 @@ scikit-learn
 taming-transformers-rom1504
 pandas
 triton
-xformers==0.0.16
-torch==1.13.1
-torchvision
 fairscale
 psutil==5.9.5
 annotated-types==0.5.0

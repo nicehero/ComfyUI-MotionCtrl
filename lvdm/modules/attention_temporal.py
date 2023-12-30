@@ -13,7 +13,7 @@ try:
 except:
     XFORMERS_IS_AVAILBLE = False
     
-from lvdm.common import (
+from ...lvdm.common import (
     checkpoint,
     exists,
     uniq,
@@ -21,7 +21,7 @@ from lvdm.common import (
     max_neg_value,
     init_
 )
-from lvdm.basics import (
+from ...lvdm.basics import (
     conv_nd,
     zero_module,
     normalization

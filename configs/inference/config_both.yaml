@@ -1,12 +1,12 @@
 model:
   base_learning_rate: 0.0001
   scale_lr: false
-  target: motionctrl.motionctrl.MotionCtrl
+  target: custom_nodes.ComfyUI-MotionCtrl.motionctrl.motionctrl.MotionCtrl
   params:
     # param for object motion control
     omcm_config:
       pretrained: ~
-      target: lvdm.modules.encoders.adapter.Adapter
+      target: custom_nodes.ComfyUI-MotionCtrl.lvdm.modules.encoders.adapter.Adapter
       params:
         channels:
         - 320
@@ -38,7 +38,7 @@ model:
     uncond_type: empty_seq
     empty_params_only: true
     scheduler_config:
-      target: utils.lr_scheduler.LambdaLRScheduler
+      target: .utils.lr_scheduler.LambdaLRScheduler
       interval: step
       frequency: 100
       params:
@@ -46,7 +46,7 @@ model:
         final_decay_ratio: 0.01
         decay_steps: 20000
     unet_config:
-      target: lvdm.modules.networks.openaimodel3d_next.UNetModel
+      target: custom_nodes.ComfyUI-MotionCtrl.lvdm.modules.networks.openaimodel3d_next.UNetModel
       params:
         in_channels: 4
         out_channels: 4
@@ -75,7 +75,7 @@ model:
         use_image_dataset: false
         addition_attention: true
     first_stage_config:
-      target: lvdm.models.autoencoder.AutoencoderKL
+      target: custom_nodes.ComfyUI-MotionCtrl.lvdm.models.autoencoder.AutoencoderKL
       params:
         embed_dim: 4
         monitor: val/rec_loss
@@ -97,7 +97,7 @@ model:
         lossconfig:
           target: torch.nn.Identity
     cond_stage_config:
-      target: lvdm.modules.encoders.condition2.FrozenOpenCLIPEmbedder
+      target: custom_nodes.ComfyUI-MotionCtrl.lvdm.modules.encoders.condition2.FrozenOpenCLIPEmbedder
       params:
         freeze: true
         layer: penultimate
