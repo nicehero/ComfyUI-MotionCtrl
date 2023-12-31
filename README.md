@@ -13,7 +13,11 @@
 
 Download the weights of MotionCtrl  [motionctrl.pth](https://huggingface.co/TencentARC/MotionCtrl/blob/main/motionctrl.pth) and put it to `ComfyUI/models/checkpoints`
 
-One node "Motionctrl Sample"
+Three nodes `Motionctrl Sample` & `Load Motion Camera Preset` & `Load Motion Traj Preset`
+
+three nodes workflow
+
+https://github.com/chaojie/ComfyUI-MotionCtrl/blob/main/workflow_threenodes.json
 
 unofficial implementation "MotionCtrl deployed on AnimateDiff" workflow:
 
