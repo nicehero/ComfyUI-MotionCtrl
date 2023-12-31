@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from gradio_utils.flow_utils import bivariate_Gaussian
+from .flow_utils import bivariate_Gaussian
 
 OBJECT_MOTION_MODE = ["Provided Trajectory", "Custom Trajectory"]
 

@@ -13,15 +13,15 @@ from omegaconf import OmegaConf
 from PIL import Image
 from pytorch_lightning import seed_everything
 
-from gradio_utils.camera_utils import CAMERA_MOTION_MODE, process_camera
-from gradio_utils.traj_utils import (OBJECT_MOTION_MODE, get_provided_traj,
+from .gradio_utils.camera_utils import CAMERA_MOTION_MODE, process_camera
+from .gradio_utils.traj_utils import (OBJECT_MOTION_MODE, get_provided_traj,
                                      process_points, process_traj)
-from gradio_utils.utils import vis_camera
-from lvdm.models.samplers.ddim import DDIMSampler
-from main.evaluation.motionctrl_inference import (DEFAULT_NEGATIVE_PROMPT,
+from .gradio_utils.utils import vis_camera
+from .lvdm.models.samplers.ddim import DDIMSampler
+from .main.evaluation.motionctrl_inference import (DEFAULT_NEGATIVE_PROMPT,
                                                   load_model_checkpoint,
                                                   post_prompt)
-from utils.utils import instantiate_from_config
+from .utils.utils import instantiate_from_config
 
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 SPACE_ID = os.environ.get('SPACE_ID', '')
