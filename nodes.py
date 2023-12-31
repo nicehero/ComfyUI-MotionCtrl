@@ -70,6 +70,66 @@ def save_results(video, fps=10):
     #writer.close()
     return torch.cat(tuple(outframes), dim=0).unsqueeze(0)
 
+MOTION_CAMERA_OPTIONS = ["U", "D", "L", "R", "O", "O_0.2x", "O_0.4x", "O_1.0x", "O_2.0x", "O_0.2x", "O_0.2x", "Round-RI", "Round-RI_90", "Round-RI-120", "Round-ZoomIn", "SPIN-ACW-60", "SPIN-CW-60", "I", "I_0.2x", "I_0.4x", "I_1.0x", "I_2.0x", "1424acd0007d40b5", "d971457c81bca597", "018f7907401f2fef", "088b93f15ca8745d", "b133a504fc90a2d1"]
+
+MOTION_TRAJ_OPTIONS = ["curve_1", "curve_2", "curve_3", "curve_4", "horizon_2", "shake_1", "shake_2", "shaking_10"]
+
+        
+def read_points(file, video_len=16, reverse=False):
+    with open(file, 'r') as f:
+        lines = f.readlines()
+    points = []
+    for line in lines:
+        x, y = line.strip().split(',')
+        points.append((int(x), int(y)))
+    if reverse:
+        points = points[::-1]
+
+    if len(points) > video_len:
+        skip = len(points) // video_len
+        points = points[::skip]
+    points = points[:video_len]
+    
+    return points
+    
+class LoadMotionCameraPreset:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "motion_camera": (MOTION_CAMERA_OPTIONS,),
+            }
+        }
+        
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("POINTS",)
+    FUNCTION = "load_motion_camera_preset"
+    CATEGORY = "motionctrl"
+    
+    def load_motion_camera_preset(self, motion_camera):
+        data="[]"
+        with open(f'custom_nodes/ComfyUI-MotionCtrl/examples/camera_poses/test_camera_{motion_camera}.json') as f:
+            data = f.read()
+        return (data,)
+        
+
+class LoadMotionTrajPreset:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "motion_traj": (MOTION_TRAJ_OPTIONS,),
+            }
+        }
+        
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("POINTS",)
+    FUNCTION = "load_motion_traj_preset"
+    CATEGORY = "motionctrl"
+    
+    def load_motion_traj_preset(self, motion_traj):
+        points = read_points(f'custom_nodes/ComfyUI-MotionCtrl/examples/trajectories/{motion_traj}.txt')
+        return (json.dumps(points),)
 
 class MotionctrlSample:
     @classmethod
@@ -209,10 +269,12 @@ class MotionctrlSample:
         batch_variants = batch_variants[0]
         
         ret = save_results(batch_variants, fps=10)
-        print(ret)
+        #print(ret)
         return ret
 
 
 NODE_CLASS_MAPPINGS = {
-    "Motionctrl Sample":MotionctrlSample
+    "Motionctrl Sample":MotionctrlSample,
+    "Load Motion Camera Preset":LoadMotionCameraPreset,
+    "Load Motion Traj Preset":LoadMotionTrajPreset
 }
