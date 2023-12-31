@@ -11,6 +11,8 @@
 
 🔥🔥  This is an implementation of MotionCtrl for ComfyUI
 
+Download the weights of MotionCtrl  [motionctrl.pth](https://huggingface.co/TencentARC/MotionCtrl/blob/main/motionctrl.pth) and put it to `ComfyUI/models/checkpoints`
+
 One node "Motionctrl Sample"
 
 unofficial implementation "MotionCtrl deployed on AnimateDiff" workflow:
