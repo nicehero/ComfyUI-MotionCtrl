@@ -18,9 +18,13 @@ Four nodes `Motionctrl Sample` & `Load Motion Camera Preset` & `Load Motion Traj
 
 base workflow
 
+<img src="assets/base_wf.png" raw=true>
+
 https://github.com/chaojie/ComfyUI-MotionCtrl/blob/main/workflow_threenodes.json
 
 unofficial implementation "MotionCtrl deployed on AnimateDiff" workflow:
+
+<img src="assets/scribble_wf.png" raw=true>
 
 https://github.com/chaojie/ComfyUI-MotionCtrl/blob/main/workflow_motionctrl.json
 
