@@ -1,21 +1,22 @@
-# MotionCtrl: A Unified and Flexible Motion Controller for Video Generation
+# This is an implementation of MotionCtrl for ComfyUI
 
-[![ Paper](https://img.shields.io/badge/Paper-gray
-)](https://wzhouxiff.github.io/projects/MotionCtrl/assets/paper/MotionCtrl.pdf) &ensp; [![ arXiv](https://img.shields.io/badge/arXiv-red
-)](https://arxiv.org/pdf/2312.03641.pdf) &ensp; [![Porject Page](https://img.shields.io/badge/Project%20Page-green
-)
-](https://wzhouxiff.github.io/projects/MotionCtrl/) &ensp; [![ Demo](https://img.shields.io/badge/Gradio%20Demo-orange
-)](https://huggingface.co/spaces/TencentARC/MotionCtrl)
+[MotionCtrl](https://github.com/TencentARC/MotionCtrl): A Unified and Flexible Motion Controller for Video Generation 
 
----
+## Install
 
-🔥🔥  This is an implementation of MotionCtrl for ComfyUI
+1. Clone this repo into custom_nodes directory of ComfyUI location
 
-Download the weights of MotionCtrl  [motionctrl.pth](https://huggingface.co/TencentARC/MotionCtrl/blob/main/motionctrl.pth) and put it to `ComfyUI/models/checkpoints`
+2. Run pip install -r requirements.txt
 
-Three nodes `Motionctrl Sample` & `Load Motion Camera Preset` & `Load Motion Traj Preset`
+3. Download the weights of MotionCtrl  [motionctrl.pth](https://huggingface.co/TencentARC/MotionCtrl/blob/main/motionctrl.pth) and put it to `ComfyUI/models/checkpoints`
 
-three nodes workflow
+## Nodes
+
+Four nodes `Motionctrl Sample` & `Load Motion Camera Preset` & `Load Motion Traj Preset` & `Select Image Indices`
+
+## Examples
+
+base workflow
 
 https://github.com/chaojie/ComfyUI-MotionCtrl/blob/main/workflow_threenodes.json
 
@@ -24,5 +25,5 @@ unofficial implementation "MotionCtrl deployed on AnimateDiff" workflow:
 https://github.com/chaojie/ComfyUI-MotionCtrl/blob/main/workflow_motionctrl.json
 
 1. Generate LVDM/VideoCrafter Video
-2. Images->Scribble
+2. Select Images->Scribble
 3. Use AnimateDiff Scribble SparseCtrl
