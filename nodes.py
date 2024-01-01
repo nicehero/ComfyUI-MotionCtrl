@@ -26,19 +26,29 @@ from .main.evaluation.motionctrl_inference import motionctrl_sample,save_images,
 from .utils.utils import instantiate_from_config
 from .gradio_utils.traj_utils import process_points,get_flow
 
-def process_camera(camera_pose_str):
+def process_camera(camera_pose_str,frame_length):
     RT=json.loads(camera_pose_str)
+    for i in range(frame_length):
+        if len(RT)<=i:
+            RT.append(RT[len(RT)-1])
+    
+    if len(RT) > frame_length:
+        RT = RT[:frame_length]
+    
     RT = np.array(RT).reshape(-1, 3, 4)
     return RT
 
     
-def process_traj(points_str):
+def process_traj(points_str,frame_length):
     points=json.loads(points_str)
+    for i in range(frame_length):
+        if len(points)<=i:
+            points.append(points[len(points)-1])
     xy_range = 1024
-    points = process_points(points)
+    #points = process_points(points,frame_length)
     points = [[int(256*x/xy_range), int(256*y/xy_range)] for x,y in points]
     
-    optical_flow = get_flow(points)
+    optical_flow = get_flow(points,frame_length)
     # optical_flow = torch.tensor(optical_flow).to(device)
 
     return optical_flow
@@ -119,6 +129,7 @@ class LoadMotionTrajPreset:
         return {
             "required": {
                 "motion_traj": (MOTION_TRAJ_OPTIONS,),
+                "frame_length": ("INT", {"default": 16}),
             }
         }
         
@@ -127,8 +138,8 @@ class LoadMotionTrajPreset:
     FUNCTION = "load_motion_traj_preset"
     CATEGORY = "motionctrl"
     
-    def load_motion_traj_preset(self, motion_traj):
-        points = read_points(f'custom_nodes/ComfyUI-MotionCtrl/examples/trajectories/{motion_traj}.txt')
+    def load_motion_traj_preset(self, motion_traj, frame_length):
+        points = read_points(f'custom_nodes/ComfyUI-MotionCtrl/examples/trajectories/{motion_traj}.txt',frame_length)
         return (json.dumps(points),)
 
 class MotionctrlSample:
@@ -139,6 +150,8 @@ class MotionctrlSample:
                 "prompt": ("STRING", {"multiline": True, "default":"a rose swaying in the wind"}),
                 "camera": ("STRING", {"multiline": True, "default":"[[1,0,0,0,0,1,0,0,0,0,1,0.2],[1,0,0,0,0,1,0,0,0,0,1,0.28750000000000003],[1,0,0,0,0,1,0,0,0,0,1,0.37500000000000006],[1,0,0,0,0,1,0,0,0,0,1,0.4625000000000001],[1,0,0,0,0,1,0,0,0,0,1,0.55],[1,0,0,0,0,1,0,0,0,0,1,0.6375000000000002],[1,0,0,0,0,1,0,0,0,0,1,0.7250000000000001],[1,0,0,0,0,1,0,0,0,0,1,0.8125000000000002],[1,0,0,0,0,1,0,0,0,0,1,0.9000000000000001],[1,0,0,0,0,1,0,0,0,0,1,0.9875000000000003],[1,0,0,0,0,1,0,0,0,0,1,1.0750000000000002],[1,0,0,0,0,1,0,0,0,0,1,1.1625000000000003],[1,0,0,0,0,1,0,0,0,0,1,1.2500000000000002],[1,0,0,0,0,1,0,0,0,0,1,1.3375000000000001],[1,0,0,0,0,1,0,0,0,0,1,1.4250000000000003],[1,0,0,0,0,1,0,0,0,0,1,1.5125000000000004]]"}),
                 "traj": ("STRING", {"multiline": True, "default":"[[117, 102],[114, 102],[109, 102],[106, 102],[105, 102],[102, 102],[99, 102],[97, 102],[96, 102],[95, 102],[93, 102],[89, 102],[85, 103],[82, 103],[81, 103],[80, 103],[79, 103],[78, 103],[76, 103],[74, 104],[73, 104],[72, 104],[71, 104],[70, 105],[69, 105],[68, 105],[67, 105],[66, 106],[64, 107],[63, 108],[62, 108],[61, 108],[61, 109],[60, 109],[59, 109],[58, 109],[57, 110],[56, 110],[55, 111],[54, 111],[53, 111],[52, 111],[52, 112],[51, 112],[50, 112],[50, 113],[49, 113],[48, 113],[46, 114],[46, 115],[45, 115],[45, 116],[44, 116],[43, 117],[42, 117],[41, 117],[41, 118],[40, 118],[41, 118],[41, 119],[42, 119],[43, 119],[44, 119],[46, 119],[47, 119],[48, 119],[49, 119],[50, 119],[51, 119],[52, 119],[53, 119],[54, 119],[55, 119],[56, 118],[58, 118],[59, 118],[61, 118],[63, 118],[64, 117],[67, 117],[70, 117],[71, 117],[73, 117],[75, 116],[76, 116],[77, 116],[80, 116],[82, 116],[83, 116],[84, 116],[85, 116],[88, 116],[91, 116],[94, 116],[97, 116],[98, 116],[100, 116],[101, 117],[102, 117],[104, 117],[105, 117],[106, 117],[107, 117],[108, 117],[109, 117],[110, 117],[111, 117],[115, 117],[119, 117],[123, 117],[124, 117],[128, 117],[129, 117],[132, 117],[134, 117],[135, 117],[136, 117],[138, 117],[139, 117],[140, 117],[141, 117],[142, 116],[145, 116],[146, 116],[148, 116],[149, 116],[151, 115],[152, 115],[153, 115],[154, 115],[155, 114],[156, 114],[157, 114],[158, 114],[159, 114],[162, 114],[163, 113],[164, 113],[165, 113],[166, 113],[167, 113],[168, 113],[169, 113],[170, 113],[171, 113],[172, 113],[173, 113],[174, 113],[175, 113],[178, 113],[181, 113],[182, 113],[183, 113],[184, 113],[185, 113],[187, 113],[188, 113],[189, 113],[191, 113],[192, 113],[193, 113],[194, 113],[195, 113],[196, 113],[197, 113],[198, 113],[199, 113],[200, 113],[201, 113],[202, 113],[203, 113],[202, 113],[201, 113],[200, 113],[198, 113],[197, 113],[196, 113],[195, 112],[194, 112],[193, 112],[192, 112],[191, 111],[190, 111],[189, 111],[188, 110],[187, 110],[186, 110],[185, 110],[184, 110],[183, 110],[182, 110],[181, 110],[180, 110],[179, 110],[178, 110],[177, 110],[175, 110],[173, 110],[172, 110],[171, 110],[170, 110],[168, 110],[167, 110],[165, 110],[164, 110],[163, 110],[161, 111],[159, 111],[155, 111],[153, 111],[151, 111],[151, 112],[150, 112],[149, 112],[148, 112],[147, 112],[145, 112],[143, 113],[142, 113],[140, 113],[139, 113],[138, 113],[136, 113],[135, 113],[134, 113],[133, 114],[131, 114],[130, 114],[128, 115],[127, 115],[126, 115],[125, 115],[124, 115],[122, 115],[121, 115],[120, 115],[118, 116],[115, 116],[113, 116],[111, 116],[109, 117],[106, 117],[103, 117],[102, 117],[100, 117],[98, 117],[97, 117],[95, 117],[94, 117],[93, 117],[92, 117],[91, 117],[90, 117],[89, 117],[88, 117],[87, 117],[86, 117],[85, 117],[84, 117],[83, 117],[84, 117],[85, 117],[87, 117],[88, 117],[89, 117],[90, 117],[92, 117],[93, 117],[95, 117],[97, 117],[99, 117],[101, 117],[103, 117],[104, 117],[105, 117],[106, 117],[107, 117],[108, 117],[109, 117],[110, 117],[112, 117],[113, 117],[114, 117],[116, 117],[117, 117],[118, 117],[119, 117],[120, 117],[121, 117],[123, 117],[124, 117],[125, 117],[126, 117],[127, 117],[129, 117],[130, 117],[131, 117],[133, 117],[134, 117],[135, 117],[136, 117],[137, 117],[138, 117],[139, 117],[140, 117],[141, 117],[142, 117],[143, 117],[145, 117],[146, 117],[147, 117],[148, 117],[149, 117],[150, 117],[149, 117],[148, 117],[147, 117],[146, 117],[144, 117],[143, 118],[142, 118],[141, 118],[140, 118],[139, 118],[138, 118],[136, 118],[135, 118],[132, 119],[131, 119],[130, 119],[129, 119],[127, 119],[126, 119],[124, 119],[123, 119],[122, 119],[121, 119],[119, 119],[118, 119],[117, 119],[115, 119],[114, 119],[113, 119],[112, 119],[111, 119],[110, 119],[109, 119],[108, 119],[107, 119],[106, 119],[107, 119],[108, 119],[109, 119],[110, 119],[112, 119],[113, 119],[114, 119],[115, 119],[116, 119],[117, 119],[118, 119],[119, 119],[120, 119],[121, 119],[122, 119],[123, 119],[124, 119],[125, 119],[126, 119],[127, 119],[127, 119],[127, 119],[127, 119]]"}),
+                "frame_length": ("INT", {"default": 16}),
+                "steps": ("INT", {"default": 50}),
                 "seed": ("INT", {"default": 1234}),
             }
         }
@@ -147,20 +160,21 @@ class MotionctrlSample:
     FUNCTION = "run_inference"
     CATEGORY = "motionctrl"
         
-    def run_inference(self,prompt,camera,traj,seed):
+    def run_inference(self,prompt,camera,traj,frame_length,steps,seed):
         gpu_num=1
         gpu_no=0
         args={"savedir":f'./output/both_seed20230211',"ckpt_path":"./models/checkpoints/motionctrl.pth","adapter_ckpt":None,"base":"./custom_nodes/ComfyUI-MotionCtrl/configs/inference/config_both.yaml","condtype":"both","prompt_dir":None,"n_samples":1,"ddim_steps":50,"ddim_eta":1.0,"bs":1,"height":256,"width":256,"unconditional_guidance_scale":1.0,"unconditional_guidance_scale_temporal":None,"seed":1234,"cond_T":800,"save_imgs":True,"cond_dir":"./custom_nodes/ComfyUI-MotionCtrl/examples/"}
         
         prompts = prompt
-        RT = process_camera(camera).reshape(-1,12)
-        traj_flow = process_traj(traj).transpose(3,0,1,2)
+        RT = process_camera(camera,frame_length).reshape(-1,12)
+        traj_flow = process_traj(traj,frame_length).transpose(3,0,1,2)
         print(prompts)
         print(RT.shape)
         print(traj_flow.shape)
         
         args["savedir"]=f'./output/{args["condtype"]}_seed{args["seed"]}'
         config = OmegaConf.load(args["base"])
+        OmegaConf.update(config, "model.params.unet_config.params.temporal_length", frame_length)
         model_config = config.pop("model", OmegaConf.create())
         model = instantiate_from_config(model_config)
         model = model.cuda(gpu_no)
@@ -176,16 +190,17 @@ class MotionctrlSample:
         h, w = args["height"] // 8, args["width"] // 8
         channels = model.channels
         frames = model.temporal_length
+        #frames = frame_length
         noise_shape = [args["bs"], channels, frames, h, w]
 
         savedir = os.path.join(args["savedir"], "samples")
         os.makedirs(savedir, exist_ok=True)
         
-        noise_shape = [1, 4, 16, 32, 32]
+        #noise_shape = [1, 4, 16, 32, 32]
         unconditional_guidance_scale = 7.5
         unconditional_guidance_scale_temporal = None
         n_samples = 1
-        ddim_steps= 50
+        ddim_steps= steps
         ddim_eta=1.0
         cond_T=800
         #seed = args["seed"]
@@ -271,10 +286,75 @@ class MotionctrlSample:
         ret = save_results(batch_variants, fps=10)
         #print(ret)
         return ret
+        
+        
+class ImageSelector:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "images": ("IMAGE", ),
+                "selected_indexes": ("STRING", {
+                    "multiline": False,
+                    "default": "1,2,3"
+                }),
+            },
+        }
+
+    RETURN_TYPES = ("IMAGE", )
+    # RETURN_NAMES = ("image_output_name",)
+
+    FUNCTION = "run"
+
+    OUTPUT_NODE = False
+
+    CATEGORY = "motionctrl"
+
+    def run(self, images: torch.Tensor, selected_indexes: str):
+        shape = images.shape
+        len_first_dim = shape[0]
+
+        selected_index: list[int] = []
+        total_indexes: list[int] = list(range(len_first_dim))
+        for s in selected_indexes.strip().split(','):
+            try:
+                if ":" in s:
+                    _li = s.strip().split(':', maxsplit=1)
+                    _start = _li[0]
+                    _end = _li[1]
+                    if _start and _end:
+                        selected_index.extend(
+                            total_indexes[int(_start):int(_end)]
+                        )
+                    elif _start:
+                        selected_index.extend(
+                            total_indexes[int(_start):]
+                        )
+                    elif _end:
+                        selected_index.extend(
+                            total_indexes[:int(_end)]
+                        )
+                else:
+                    x: int = int(s.strip())
+                    if x < len_first_dim:
+                        selected_index.append(x)
+            except:
+                pass
+
+        if selected_index:
+            print(f"ImageSelector: selected: {len(selected_index)} images")
+            return (images[selected_index, :, :, :], )
+
+        print(f"ImageSelector: selected no images, passthrough")
+        return (images, )
 
 
 NODE_CLASS_MAPPINGS = {
     "Motionctrl Sample":MotionctrlSample,
     "Load Motion Camera Preset":LoadMotionCameraPreset,
-    "Load Motion Traj Preset":LoadMotionTrajPreset
+    "Load Motion Traj Preset":LoadMotionTrajPreset,
+    "Select Image Indices": ImageSelector
 }
