@@ -25,6 +25,7 @@ from .main.evaluation.motionctrl_prompts_camerapose_trajs import (
 from .main.evaluation.motionctrl_inference import motionctrl_sample,save_images,load_camera_pose,load_trajs,load_model_checkpoint,post_prompt,DEFAULT_NEGATIVE_PROMPT
 from .utils.utils import instantiate_from_config
 from .gradio_utils.traj_utils import process_points,get_flow
+from PIL import Image, ImageFont, ImageDraw
 
 def process_camera(camera_pose_str,frame_length):
     RT=json.loads(camera_pose_str)
@@ -53,7 +54,7 @@ def process_traj(points_str,frame_length):
 
     return optical_flow
     
-def save_results(video, fps=10):
+def save_results(video, fps=10,traj="[]",draw_traj_dot=False):
     
     # b,c,t,h,w
     video = video.detach().cpu()
@@ -72,7 +73,21 @@ def save_results(video, fps=10):
     #writer = imageio.get_writer(path, format='mp4', mode='I', fps=fps)
     for i in range(grid.shape[0]):
         img = grid[i].numpy()
-        image_tensor_out = torch.tensor(np.array(grid[i]).astype(np.float32) / 255.0)  # Convert back to CxHxW
+        image=Image.fromarray(img)
+        draw = ImageDraw.Draw(image)
+        #draw.ellipse((0,0,255,255),fill=(255,0,0), outline=(255,0,0))
+        if draw_traj_dot:
+            traj_list=json.loads(traj)
+            traj_point=traj_list[len(traj_list)-1]
+            if len(traj_list)>i:
+                traj_point=traj_list[i]
+            
+            #print(traj_point)
+            size=3
+            draw.ellipse((traj_point[0]/4-size,traj_point[1]/4-size,traj_point[0]/4+size,traj_point[1]/4+size),fill=(255,0,0), outline=(255,0,0))
+        
+        
+        image_tensor_out = torch.tensor(np.array(image).astype(np.float32) / 255.0)  # Convert back to CxHxW
         image_tensor_out = torch.unsqueeze(image_tensor_out, 0)
         outframes.append(image_tensor_out)
         #writer.append_data(img)
@@ -91,7 +106,7 @@ def read_points(file, video_len=16, reverse=False):
     points = []
     for line in lines:
         x, y = line.strip().split(',')
-        points.append((int(x), int(y)))
+        points.append((int(x)*4, int(y)*4))
     if reverse:
         points = points[::-1]
 
@@ -120,6 +135,7 @@ class LoadMotionCameraPreset:
         data="[]"
         with open(f'custom_nodes/ComfyUI-MotionCtrl/examples/camera_poses/test_camera_{motion_camera}.json') as f:
             data = f.read()
+        
         return (data,)
         
 
@@ -153,6 +169,10 @@ class MotionctrlSample:
                 "frame_length": ("INT", {"default": 16}),
                 "steps": ("INT", {"default": 50}),
                 "seed": ("INT", {"default": 1234}),
+            },
+            "optional": {
+                "traj_tool": ("STRING",{"multiline": False, "default": "https://chaojie.github.io/ComfyUI-MotionCtrl/tools/draw.html"}),
+                "draw_traj_dot": ("BOOLEAN", {"default": False}),#, "label_on": "draw", "label_off": "not draw"
             }
         }
 
@@ -160,7 +180,7 @@ class MotionctrlSample:
     FUNCTION = "run_inference"
     CATEGORY = "motionctrl"
         
-    def run_inference(self,prompt,camera,traj,frame_length,steps,seed):
+    def run_inference(self,prompt,camera,traj,frame_length,steps,seed,traj_tool="https://chaojie.github.io/ComfyUI-MotionCtrl/tools/draw.html",draw_traj_dot=False):
         gpu_num=1
         gpu_no=0
         args={"savedir":f'./output/both_seed20230211',"ckpt_path":"./models/checkpoints/motionctrl.pth","adapter_ckpt":None,"base":"./custom_nodes/ComfyUI-MotionCtrl/configs/inference/config_both.yaml","condtype":"both","prompt_dir":None,"n_samples":1,"ddim_steps":50,"ddim_eta":1.0,"bs":1,"height":256,"width":256,"unconditional_guidance_scale":1.0,"unconditional_guidance_scale_temporal":None,"seed":1234,"cond_T":800,"save_imgs":True,"cond_dir":"./custom_nodes/ComfyUI-MotionCtrl/examples/"}
@@ -283,7 +303,7 @@ class MotionctrlSample:
         batch_variants = torch.stack(batch_variants, dim=1)
         batch_variants = batch_variants[0]
         
-        ret = save_results(batch_variants, fps=10)
+        ret = save_results(batch_variants, fps=10,traj=traj,draw_traj_dot=draw_traj_dot)
         #print(ret)
         return ret
         

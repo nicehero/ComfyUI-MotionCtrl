@@ -3,53 +3,6 @@
   "last_link_id": 34,
   "nodes": [
     {
-      "id": 6,
-      "type": "VHS_VideoCombine",
-      "pos": [
-        1226,
-        113
-      ],
-      "size": [
-        315,
-        539
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 4
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "VHS_VideoCombine"
-      },
-      "widgets_values": {
-        "frame_rate": 8,
-        "loop_count": 0,
-        "filename_prefix": "AnimateDiff",
-        "format": "image/gif",
-        "pingpong": false,
-        "save_image": true,
-        "crf": 20,
-        "save_metadata": true,
-        "audio_file": "",
-        "videopreview": {
-          "hidden": false,
-          "paused": false,
-          "params": {
-            "filename": "AnimateDiff_00358.gif",
-            "subfolder": "",
-            "type": "output",
-            "format": "image/gif"
-          }
-        }
-      }
-    },
-    {
       "id": 9,
       "type": "HEDPreprocessor",
       "pos": [
@@ -294,45 +247,6 @@
       ]
     },
     {
-      "id": 19,
-      "type": "CLIPTextEncode",
-      "pos": [
-        754,
-        1150
-      ],
-      "size": {
-        "0": 400,
-        "1": 200
-      },
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 15
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            24
-          ],
-          "shape": 3,
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        "a rose swaying in the wind"
-      ]
-    },
-    {
       "id": 20,
       "type": "CLIPTextEncode",
       "pos": [
@@ -497,7 +411,7 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "AnimateDiff_00359.mp4",
+            "filename": "AnimateDiff_00419.mp4",
             "subfolder": "",
             "type": "output",
             "format": "video/h264-mp4"
@@ -562,90 +476,6 @@
       ]
     },
     {
-      "id": 8,
-      "type": "ImageScale",
-      "pos": [
-        457,
-        232
-      ],
-      "size": {
-        "0": 315,
-        "1": 130
-      },
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 34
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            6,
-            30
-          ],
-          "shape": 3,
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ImageScale"
-      },
-      "widgets_values": [
-        "nearest-exact",
-        512,
-        512,
-        "disabled"
-      ]
-    },
-    {
-      "id": 25,
-      "type": "FakeScribblePreprocessor",
-      "pos": [
-        612.7702209472652,
-        411.1331268310543
-      ],
-      "size": {
-        "0": 319.20001220703125,
-        "1": 82
-      },
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 30
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            31,
-            32
-          ],
-          "shape": 3,
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "FakeScribblePreprocessor"
-      },
-      "widgets_values": [
-        "enable",
-        512
-      ]
-    },
-    {
       "id": 10,
       "type": "PreviewImage",
       "pos": [
@@ -669,150 +499,6 @@
       "properties": {
         "Node name for S&R": "PreviewImage"
       }
-    },
-    {
-      "id": 24,
-      "type": "ACN_SparseCtrlIndexMethodNode",
-      "pos": [
-        -167,
-        1479
-      ],
-      "size": {
-        "0": 315,
-        "1": 58
-      },
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "outputs": [
-        {
-          "name": "SPARSE_METHOD",
-          "type": "SPARSE_METHOD",
-          "links": [
-            29
-          ],
-          "shape": 3,
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "ACN_SparseCtrlIndexMethodNode"
-      },
-      "widgets_values": [
-        "0,7,15"
-      ]
-    },
-    {
-      "id": 26,
-      "type": "Select Image Indices",
-      "pos": [
-        236,
-        470
-      ],
-      "size": {
-        "0": 315,
-        "1": 58
-      },
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 33
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            34
-          ],
-          "shape": 3,
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "Select Image Indices"
-      },
-      "widgets_values": [
-        "0,7,15"
-      ]
-    },
-    {
-      "id": 18,
-      "type": "EmptyLatentImage",
-      "pos": [
-        1374,
-        1029
-      ],
-      "size": {
-        "0": 315,
-        "1": 106
-      },
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            22
-          ],
-          "shape": 3,
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "EmptyLatentImage"
-      },
-      "widgets_values": [
-        512,
-        512,
-        16
-      ]
-    },
-    {
-      "id": 3,
-      "type": "Motionctrl Sample",
-      "pos": [
-        11,
-        110
-      ],
-      "size": {
-        "0": 400,
-        "1": 272
-      },
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            4,
-            33
-          ],
-          "shape": 3,
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "Motionctrl Sample"
-      },
-      "widgets_values": [
-        "a rose swaying in the wind",
-        "[[1,0,0,-0.2,0,1,0,0,0,0,1,0],[1,0,0,-0.28750000000000003,0,1,0,0,0,0,1,0],[1,0,0,-0.37500000000000006,0,1,0,0,0,0,1,0],[1,0,0,-0.4625000000000001,0,1,0,0,0,0,1,0],[1,0,0,-0.55,0,1,0,0,0,0,1,0],[1,0,0,-0.6375000000000002,0,1,0,0,0,0,1,0],[1,0,0,-0.7250000000000001,0,1,0,0,0,0,1,0],[1,0,0,-0.8125000000000002,0,1,0,0,0,0,1,0],[1,0,0,-0.9000000000000001,0,1,0,0,0,0,1,0],[1,0,0,-0.9875000000000003,0,1,0,0,0,0,1,0],[1,0,0,-1.0750000000000002,0,1,0,0,0,0,1,0],[1,0,0,-1.1625000000000003,0,1,0,0,0,0,1,0],[1,0,0,-1.2500000000000002,0,1,0,0,0,0,1,0],[1,0,0,-1.3375000000000001,0,1,0,0,0,0,1,0],[1,0,0,-1.4250000000000003,0,1,0,0,0,0,1,0],[1,0,0,-1.5125000000000004,0,1,0,0,0,0,1,0]]",
-        "[[468, 408], [280, 420], [196, 452], [208, 476], [364, 464], [540, 468], [660, 452], [776, 452], [752, 440], [636, 444], [504, 460], [356, 468], [428, 468], [540, 468], [560, 472], [440, 476]]",
-        16,
-        50,
-        154,
-        "randomize"
-      ]
     },
     {
       "id": 21,
@@ -864,13 +550,329 @@
         "Node name for S&R": "KSampler"
       },
       "widgets_values": [
-        518024448017612,
+        97583807913213,
         "randomize",
         8,
         2,
         "lcm",
         "sgm_uniform",
         1
+      ]
+    },
+    {
+      "id": 6,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        1226,
+        113
+      ],
+      "size": [
+        315,
+        539
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 4
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine"
+      },
+      "widgets_values": {
+        "frame_rate": 8,
+        "loop_count": 0,
+        "filename_prefix": "AnimateDiff",
+        "format": "image/gif",
+        "pingpong": false,
+        "save_image": true,
+        "crf": 20,
+        "save_metadata": true,
+        "audio_file": "",
+        "videopreview": {
+          "hidden": false,
+          "paused": false,
+          "params": {
+            "filename": "AnimateDiff_00421.gif",
+            "subfolder": "",
+            "type": "output",
+            "format": "image/gif"
+          }
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": "ImageScale",
+      "pos": [
+        457,
+        232
+      ],
+      "size": {
+        "0": 315,
+        "1": 130
+      },
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 34
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            6,
+            30
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScale"
+      },
+      "widgets_values": [
+        "nearest-exact",
+        512,
+        513,
+        "disabled"
+      ]
+    },
+    {
+      "id": 26,
+      "type": "Select Image Indices",
+      "pos": [
+        214,
+        541
+      ],
+      "size": {
+        "0": 315,
+        "1": 58
+      },
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 33
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            34
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Select Image Indices"
+      },
+      "widgets_values": [
+        "0,4,7,11,15,19,23,27,31"
+      ]
+    },
+    {
+      "id": 24,
+      "type": "ACN_SparseCtrlIndexMethodNode",
+      "pos": [
+        -167,
+        1479
+      ],
+      "size": {
+        "0": 315,
+        "1": 58
+      },
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "SPARSE_METHOD",
+          "type": "SPARSE_METHOD",
+          "links": [
+            29
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ACN_SparseCtrlIndexMethodNode"
+      },
+      "widgets_values": [
+        "0,4,7,11,15,19,23,27,31"
+      ]
+    },
+    {
+      "id": 19,
+      "type": "CLIPTextEncode",
+      "pos": [
+        754,
+        1150
+      ],
+      "size": {
+        "0": 400,
+        "1": 200
+      },
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            24
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "a leaf"
+      ]
+    },
+    {
+      "id": 18,
+      "type": "EmptyLatentImage",
+      "pos": [
+        1374,
+        1029
+      ],
+      "size": {
+        "0": 315,
+        "1": 106
+      },
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            22
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        512,
+        512,
+        32
+      ]
+    },
+    {
+      "id": 25,
+      "type": "FakeScribblePreprocessor",
+      "pos": [
+        566,
+        458
+      ],
+      "size": {
+        "0": 319.20001220703125,
+        "1": 82
+      },
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            31,
+            32
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "FakeScribblePreprocessor"
+      },
+      "widgets_values": [
+        "enable",
+        512
+      ]
+    },
+    {
+      "id": 3,
+      "type": "Motionctrl Sample",
+      "pos": [
+        11,
+        110
+      ],
+      "size": {
+        "0": 400,
+        "1": 320
+      },
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            4,
+            33
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Motionctrl Sample"
+      },
+      "widgets_values": [
+        "a girl jump",
+        "[[1,0,0,-0.2,0,1,0,0,0,0,1,0]]",
+        "[[84,752],[96,556],[128,424],[156,320],[184,252],[232,188],[272,144],[328,108],[384,92],[440,92],[488,88],[620,116],[680,116],[764,132],[804,144],[872,252],[884,344],[916,440],[904,568],[888,628],[828,708],[760,764],[704,816],[616,848],[516,876],[420,876],[336,876],[288,868],[196,844],[136,816],[88,792],[68,740]]",
+        32,
+        50,
+        2048,
+        "fixed",
+        "https://chaojie.github.io/ComfyUI-MotionCtrl/tools/draw.html",
+        true
       ]
     }
   ],
