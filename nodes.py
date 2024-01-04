@@ -5,7 +5,7 @@ import json
 import math
 import os
 import tempfile
-
+import folder_paths
 import imageio
 import sys
 import time
@@ -25,7 +25,6 @@ from .main.evaluation.motionctrl_prompts_camerapose_trajs import (
 from .main.evaluation.motionctrl_inference import motionctrl_sample,save_images,load_camera_pose,load_trajs,load_model_checkpoint,post_prompt,DEFAULT_NEGATIVE_PROMPT
 from .utils.utils import instantiate_from_config
 from .gradio_utils.traj_utils import process_points,get_flow
-from PIL import Image, ImageFont, ImageDraw
 
 def process_camera(camera_pose_str,frame_length):
     RT=json.loads(camera_pose_str)
@@ -54,7 +53,7 @@ def process_traj(points_str,frame_length):
 
     return optical_flow
     
-def save_results(video, fps=10,traj="[]",draw_traj_dot=False):
+def save_results(video, fps=10):
     
     # b,c,t,h,w
     video = video.detach().cpu()
@@ -73,21 +72,7 @@ def save_results(video, fps=10,traj="[]",draw_traj_dot=False):
     #writer = imageio.get_writer(path, format='mp4', mode='I', fps=fps)
     for i in range(grid.shape[0]):
         img = grid[i].numpy()
-        image=Image.fromarray(img)
-        draw = ImageDraw.Draw(image)
-        #draw.ellipse((0,0,255,255),fill=(255,0,0), outline=(255,0,0))
-        if draw_traj_dot:
-            traj_list=json.loads(traj)
-            traj_point=traj_list[len(traj_list)-1]
-            if len(traj_list)>i:
-                traj_point=traj_list[i]
-            
-            #print(traj_point)
-            size=3
-            draw.ellipse((traj_point[0]/4-size,traj_point[1]/4-size,traj_point[0]/4+size,traj_point[1]/4+size),fill=(255,0,0), outline=(255,0,0))
-        
-        
-        image_tensor_out = torch.tensor(np.array(image).astype(np.float32) / 255.0)  # Convert back to CxHxW
+        image_tensor_out = torch.tensor(np.array(grid[i]).astype(np.float32) / 255.0)  # Convert back to CxHxW
         image_tensor_out = torch.unsqueeze(image_tensor_out, 0)
         outframes.append(image_tensor_out)
         #writer.append_data(img)
@@ -106,7 +91,7 @@ def read_points(file, video_len=16, reverse=False):
     points = []
     for line in lines:
         x, y = line.strip().split(',')
-        points.append((int(x)*4, int(y)*4))
+        points.append((int(x), int(y)))
     if reverse:
         points = points[::-1]
 
@@ -135,7 +120,6 @@ class LoadMotionCameraPreset:
         data="[]"
         with open(f'custom_nodes/ComfyUI-MotionCtrl/examples/camera_poses/test_camera_{motion_camera}.json') as f:
             data = f.read()
-        
         return (data,)
         
 
@@ -163,16 +147,13 @@ class MotionctrlSample:
     def INPUT_TYPES(cls):
         return {
             "required": {
+                "ckpt_name": (folder_paths.get_filename_list("checkpoints"),),
                 "prompt": ("STRING", {"multiline": True, "default":"a rose swaying in the wind"}),
                 "camera": ("STRING", {"multiline": True, "default":"[[1,0,0,0,0,1,0,0,0,0,1,0.2],[1,0,0,0,0,1,0,0,0,0,1,0.28750000000000003],[1,0,0,0,0,1,0,0,0,0,1,0.37500000000000006],[1,0,0,0,0,1,0,0,0,0,1,0.4625000000000001],[1,0,0,0,0,1,0,0,0,0,1,0.55],[1,0,0,0,0,1,0,0,0,0,1,0.6375000000000002],[1,0,0,0,0,1,0,0,0,0,1,0.7250000000000001],[1,0,0,0,0,1,0,0,0,0,1,0.8125000000000002],[1,0,0,0,0,1,0,0,0,0,1,0.9000000000000001],[1,0,0,0,0,1,0,0,0,0,1,0.9875000000000003],[1,0,0,0,0,1,0,0,0,0,1,1.0750000000000002],[1,0,0,0,0,1,0,0,0,0,1,1.1625000000000003],[1,0,0,0,0,1,0,0,0,0,1,1.2500000000000002],[1,0,0,0,0,1,0,0,0,0,1,1.3375000000000001],[1,0,0,0,0,1,0,0,0,0,1,1.4250000000000003],[1,0,0,0,0,1,0,0,0,0,1,1.5125000000000004]]"}),
                 "traj": ("STRING", {"multiline": True, "default":"[[117, 102],[114, 102],[109, 102],[106, 102],[105, 102],[102, 102],[99, 102],[97, 102],[96, 102],[95, 102],[93, 102],[89, 102],[85, 103],[82, 103],[81, 103],[80, 103],[79, 103],[78, 103],[76, 103],[74, 104],[73, 104],[72, 104],[71, 104],[70, 105],[69, 105],[68, 105],[67, 105],[66, 106],[64, 107],[63, 108],[62, 108],[61, 108],[61, 109],[60, 109],[59, 109],[58, 109],[57, 110],[56, 110],[55, 111],[54, 111],[53, 111],[52, 111],[52, 112],[51, 112],[50, 112],[50, 113],[49, 113],[48, 113],[46, 114],[46, 115],[45, 115],[45, 116],[44, 116],[43, 117],[42, 117],[41, 117],[41, 118],[40, 118],[41, 118],[41, 119],[42, 119],[43, 119],[44, 119],[46, 119],[47, 119],[48, 119],[49, 119],[50, 119],[51, 119],[52, 119],[53, 119],[54, 119],[55, 119],[56, 118],[58, 118],[59, 118],[61, 118],[63, 118],[64, 117],[67, 117],[70, 117],[71, 117],[73, 117],[75, 116],[76, 116],[77, 116],[80, 116],[82, 116],[83, 116],[84, 116],[85, 116],[88, 116],[91, 116],[94, 116],[97, 116],[98, 116],[100, 116],[101, 117],[102, 117],[104, 117],[105, 117],[106, 117],[107, 117],[108, 117],[109, 117],[110, 117],[111, 117],[115, 117],[119, 117],[123, 117],[124, 117],[128, 117],[129, 117],[132, 117],[134, 117],[135, 117],[136, 117],[138, 117],[139, 117],[140, 117],[141, 117],[142, 116],[145, 116],[146, 116],[148, 116],[149, 116],[151, 115],[152, 115],[153, 115],[154, 115],[155, 114],[156, 114],[157, 114],[158, 114],[159, 114],[162, 114],[163, 113],[164, 113],[165, 113],[166, 113],[167, 113],[168, 113],[169, 113],[170, 113],[171, 113],[172, 113],[173, 113],[174, 113],[175, 113],[178, 113],[181, 113],[182, 113],[183, 113],[184, 113],[185, 113],[187, 113],[188, 113],[189, 113],[191, 113],[192, 113],[193, 113],[194, 113],[195, 113],[196, 113],[197, 113],[198, 113],[199, 113],[200, 113],[201, 113],[202, 113],[203, 113],[202, 113],[201, 113],[200, 113],[198, 113],[197, 113],[196, 113],[195, 112],[194, 112],[193, 112],[192, 112],[191, 111],[190, 111],[189, 111],[188, 110],[187, 110],[186, 110],[185, 110],[184, 110],[183, 110],[182, 110],[181, 110],[180, 110],[179, 110],[178, 110],[177, 110],[175, 110],[173, 110],[172, 110],[171, 110],[170, 110],[168, 110],[167, 110],[165, 110],[164, 110],[163, 110],[161, 111],[159, 111],[155, 111],[153, 111],[151, 111],[151, 112],[150, 112],[149, 112],[148, 112],[147, 112],[145, 112],[143, 113],[142, 113],[140, 113],[139, 113],[138, 113],[136, 113],[135, 113],[134, 113],[133, 114],[131, 114],[130, 114],[128, 115],[127, 115],[126, 115],[125, 115],[124, 115],[122, 115],[121, 115],[120, 115],[118, 116],[115, 116],[113, 116],[111, 116],[109, 117],[106, 117],[103, 117],[102, 117],[100, 117],[98, 117],[97, 117],[95, 117],[94, 117],[93, 117],[92, 117],[91, 117],[90, 117],[89, 117],[88, 117],[87, 117],[86, 117],[85, 117],[84, 117],[83, 117],[84, 117],[85, 117],[87, 117],[88, 117],[89, 117],[90, 117],[92, 117],[93, 117],[95, 117],[97, 117],[99, 117],[101, 117],[103, 117],[104, 117],[105, 117],[106, 117],[107, 117],[108, 117],[109, 117],[110, 117],[112, 117],[113, 117],[114, 117],[116, 117],[117, 117],[118, 117],[119, 117],[120, 117],[121, 117],[123, 117],[124, 117],[125, 117],[126, 117],[127, 117],[129, 117],[130, 117],[131, 117],[133, 117],[134, 117],[135, 117],[136, 117],[137, 117],[138, 117],[139, 117],[140, 117],[141, 117],[142, 117],[143, 117],[145, 117],[146, 117],[147, 117],[148, 117],[149, 117],[150, 117],[149, 117],[148, 117],[147, 117],[146, 117],[144, 117],[143, 118],[142, 118],[141, 118],[140, 118],[139, 118],[138, 118],[136, 118],[135, 118],[132, 119],[131, 119],[130, 119],[129, 119],[127, 119],[126, 119],[124, 119],[123, 119],[122, 119],[121, 119],[119, 119],[118, 119],[117, 119],[115, 119],[114, 119],[113, 119],[112, 119],[111, 119],[110, 119],[109, 119],[108, 119],[107, 119],[106, 119],[107, 119],[108, 119],[109, 119],[110, 119],[112, 119],[113, 119],[114, 119],[115, 119],[116, 119],[117, 119],[118, 119],[119, 119],[120, 119],[121, 119],[122, 119],[123, 119],[124, 119],[125, 119],[126, 119],[127, 119],[127, 119],[127, 119],[127, 119]]"}),
                 "frame_length": ("INT", {"default": 16}),
                 "steps": ("INT", {"default": 50}),
                 "seed": ("INT", {"default": 1234}),
-            },
-            "optional": {
-                "traj_tool": ("STRING",{"multiline": False, "default": "https://chaojie.github.io/ComfyUI-MotionCtrl/tools/draw.html"}),
-                "draw_traj_dot": ("BOOLEAN", {"default": False}),#, "label_on": "draw", "label_off": "not draw"
             }
         }
 
@@ -180,11 +161,15 @@ class MotionctrlSample:
     FUNCTION = "run_inference"
     CATEGORY = "motionctrl"
         
-    def run_inference(self,prompt,camera,traj,frame_length,steps,seed,traj_tool="https://chaojie.github.io/ComfyUI-MotionCtrl/tools/draw.html",draw_traj_dot=False):
+    def run_inference(self,ckpt_name,prompt,camera,traj,frame_length,steps,seed):
         gpu_num=1
         gpu_no=0
-        args={"savedir":f'./output/both_seed20230211',"ckpt_path":"./models/checkpoints/motionctrl.pth","adapter_ckpt":None,"base":"./custom_nodes/ComfyUI-MotionCtrl/configs/inference/config_both.yaml","condtype":"both","prompt_dir":None,"n_samples":1,"ddim_steps":50,"ddim_eta":1.0,"bs":1,"height":256,"width":256,"unconditional_guidance_scale":1.0,"unconditional_guidance_scale_temporal":None,"seed":1234,"cond_T":800,"save_imgs":True,"cond_dir":"./custom_nodes/ComfyUI-MotionCtrl/examples/"}
-        
+        ckpt_path = folder_paths.get_full_path("checkpoints", ckpt_name)
+        comfy_path = os.path.dirname(folder_paths.__file__)
+        config_path = os.path.join(comfy_path, 'custom_nodes/ComfyUI-MotionCtrl/configs/inference/config_both.yaml')
+
+        args={"savedir":f'./output/both_seed20230211',"ckpt_path":f"{ckpt_path}","adapter_ckpt":None,"base": f"{config_path}","condtype":"both","prompt_dir":None,"n_samples":1,"ddim_steps":50,"ddim_eta":1.0,"bs":1,"height":256,"width":256,"unconditional_guidance_scale":1.0,"unconditional_guidance_scale_temporal":None,"seed":1234,"cond_T":800,"save_imgs":True,"cond_dir":"./custom_nodes/ComfyUI-MotionCtrl/examples/"}
+
         prompts = prompt
         RT = process_camera(camera,frame_length).reshape(-1,12)
         traj_flow = process_traj(traj,frame_length).transpose(3,0,1,2)
@@ -303,7 +288,7 @@ class MotionctrlSample:
         batch_variants = torch.stack(batch_variants, dim=1)
         batch_variants = batch_variants[0]
         
-        ret = save_results(batch_variants, fps=10,traj=traj,draw_traj_dot=draw_traj_dot)
+        ret = save_results(batch_variants, fps=10)
         #print(ret)
         return ret
         
